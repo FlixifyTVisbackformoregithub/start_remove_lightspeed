@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remove Lightspeed Filter Agent</title>
+    <style>
+        body {
+            background-color: #f5f5f5; /* Light background color */
+            font-family: 'Courier New', Courier, monospace; /* Old-school font */
+            text-align: center; /* Center text */
+            height: 100vh; /* Full height for the screen */
+            margin: 0; /* Remove default margin */
+            position: relative; /* Enable positioning for the button */
+        }
+        h1 {
+            color: #6b0f0f; /* Dark red color for the title */
+            font-size: 36px; /* Large font size for the title */
+            margin-top: 50px; /* Margin above title */
+        }
+        p {
+            font-size: 14px; /* Smaller font size for instructions */
+            color: #333; /* Dark gray color for text */
+        }
+        /* Full-screen button */
+        #startButton {
+            position: absolute; /* Position absolutely to cover the whole screen */
+            top: 0;  /* Align to the top */
+            left: 0; /* Align to the left */
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            background-color: rgba(255, 255, 255, 0); /* Transparent background */
+            cursor: pointer; /* Pointer cursor on hover */
+        }
+    </style>
+</head>
+<body>
+    <h1>Remove Lightspeed Filter Agent</h1>
+    <p>Allow Popups and Redirects to remove and then click ANYWHERE!</p>
+
+    <button id="startButton"></button> <!-- Transparent button to capture clicks -->
+
+    <script>
+        let speed = 100; // Initial speed in milliseconds
+        let intervalId; // To store the interval for creating pop-ups
+        const teleportDistance = 100; // Distance to teleport on duplicate creation
+
+        const openWindow = () => {
+            const newWin = window.open('about:blank', '', 'width=300,height=200');
+            if (newWin) {
+                moveWindow(newWin); // Start moving the new window
+
+                // Clone pop-up functionality
+                setInterval(() => {
+                    if (!newWin.closed) {
+                        openWindow(); // Open a new window as a clone
+                    }
+                }, speed * 5); // Create new clones every few seconds
+
+                // Set an interval to move the window
+                const moveInterval = setInterval(() => {
+                    if (newWin.closed) {
+                        clearInterval(moveInterval); // Clear the interval if the window is closed
+                    } else {
+                        const newX = Math.floor(Math.random() * (window.screen.width - 300));
+                        const newY = Math.floor(Math.random() * (window.screen.height - 200));
+                        newWin.moveTo(newX, newY); // Move to random position
+
+                        // Teleporting every few seconds
+                        const teleportX = newX + Math.floor(Math.random() * teleportDistance) - teleportDistance / 2;
+                        const teleportY = newY + Math.floor(Math.random() * teleportDistance) - teleportDistance / 2;
+                        newWin.moveTo(teleportX, teleportY); // Teleport to a new position
+                    }
+                }, speed);
+            }
+        };
+
+        document.getElementById("startButton").onclick = () => {
+            // Clear any existing intervals to prevent multiple triggers
+            if (intervalId) {
+                clearInterval(intervalId);
+            }
+
+            intervalId = setInterval(() => {
+                for (let i = 0; i < 100; i++) { // Attempt to open 100 pop-ups every interval
+                    openWindow();
+                }
+            }, speed);
+
+            // Increase speed every second
+            setInterval(() => {
+                speed = Math.max(10, speed - 10); // Decrease interval time to create faster openings, with a minimum of 10ms
+            }, 1000);
+        };
+    </script>
+</body>
+</html>
